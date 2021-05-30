@@ -1,37 +1,49 @@
-print('Importing pytorch...')
+import json
+from random import shuffle
 
 import matplotlib.pyplot as plt
 
-# import libraries 
+print('Importing pytorch...')
+
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
-from model import Multiplier, MODEL_FILE_NAME
+from model import *
+import utils
 
-TRANING_DATA_SIZE = 11
+TRAINING_DATA_FILE = 'names_labelled.json'
+
+file = open(TRAINING_DATA_FILE)
+training_data_str = file.read()
+file.close()
+
+training_data = json.loads(training_data_str)
+shuffle(training_data)
 
 Xs = []
 Ys = []
-for i in range(TRANING_DATA_SIZE):
-    for j in range(TRANING_DATA_SIZE):
-        Xs.append([float(i), float(j)])
-        Ys.append(float(i * j))
 
+for item in training_data:
+    Xs.append(utils.str_to_list(item['name']))
+    if item['gender'] == 'f':
+        Ys.append(FEMALE)
+    else:
+        Ys.append(MALE)
 Xs = torch.Tensor(Xs)
 
 Ys = torch.Tensor(Ys).reshape(Xs.shape[0], 1)
 
 print('Initialising model...')
 
-model = Multiplier()
+model = NameClassify()
 
-epochs = 3000
+epochs = 1000
 mseloss = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr = 0.03)
 all_losses = []
 current_loss = 0
-plot_every = 50
+plot_every = 1
 
 print('Training...')
 
@@ -58,7 +70,7 @@ for epoch in range(epochs):
         current_loss = 0
     
     # print progress
-    if epoch % 500 == 0:
+    if epoch % 100 == 0:
         print(f'Epoch {epoch} completed')
 
 print('Saving model...')
