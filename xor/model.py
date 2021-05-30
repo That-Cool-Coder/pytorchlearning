@@ -3,6 +3,8 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
+MODEL_FILE_NAME = 'xor.pth'
+
 class XOR(nn.Module):
     def __init__(self):
         super(XOR, self).__init__()

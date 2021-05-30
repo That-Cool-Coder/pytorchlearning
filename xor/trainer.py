@@ -1,11 +1,12 @@
+print('Importing pytorch...')
 # import libraries 
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
-from xor_model import XOR
+from model import XOR, MODEL_FILE_NAME
 
-MODEL_FILE_NAME = 'xor.pth'
+print('Initialising model...')
 
 # create data
 Xs = torch.Tensor([[0., 0.],
@@ -23,6 +24,8 @@ optimizer = torch.optim.Adam(model.parameters(), lr = 0.03)
 all_losses = []
 current_loss = 0
 plot_every = 50
+
+print('Training...')
 
 for epoch in range(epochs):
     # input training example and return the prediction
@@ -48,6 +51,10 @@ for epoch in range(epochs):
     
     # print progress
     if epoch % 500 == 0:
-        print(f'Epoch: {epoch} completed')
+        print(f'Epoch {epoch} completed')
+
+print('Saving model...')
 
 torch.save(model.state_dict(), MODEL_FILE_NAME)
+
+print('Done')

@@ -1,13 +1,15 @@
+print('Importing pytorch...')
+
 # import libraries 
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
-from xor_model import XOR
+from model import XOR, MODEL_FILE_NAME
 
-MODEL_FILE_NAME = 'xor.pth'
-
+print('Initialising model...')
 model = XOR()
+print('Loading training...')
 model.load_state_dict(torch.load(MODEL_FILE_NAME))
 
 # test input
