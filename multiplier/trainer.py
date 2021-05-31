@@ -1,22 +1,24 @@
-print('Importing pytorch...')
+from random import shuffle
 
 import matplotlib.pyplot as plt
 
-# import libraries 
+print('Importing pytorch...')
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
 from model import Multiplier, MODEL_FILE_NAME
 
-TRANING_DATA_SIZE = 11
+TRAINING_VALUES = [*range(0, 30, 1)]
+
+shuffle(TRAINING_VALUES)
 
 Xs = []
 Ys = []
-for i in range(TRANING_DATA_SIZE):
-    for j in range(TRANING_DATA_SIZE):
-        Xs.append([float(i), float(j)])
-        Ys.append(float(i * j))
+for item1 in TRAINING_VALUES:
+    for item2 in TRAINING_VALUES:
+        Xs.append([float(item1), float(item2)])
+        Ys.append(float(item1 * item2))
 
 Xs = torch.Tensor(Xs)
 
@@ -58,7 +60,7 @@ for epoch in range(epochs):
         current_loss = 0
     
     # print progress
-    if epoch % 500 == 0:
+    if epoch % (plot_every * 10) == 0:
         print(f'Epoch {epoch} completed')
 
 print('Saving model...')
