@@ -1,8 +1,6 @@
 import json
 from random import shuffle
 
-import matplotlib.pyplot as plt
-
 print('Importing pytorch...')
 
 import torch
@@ -12,16 +10,19 @@ from torch.autograd import Variable
 from model import *
 import utils
 
-TRAINING_DATA_FILE = 'names_labelled.json'
+TRAINING_DATA_FILE = 'names.json'
 
 print('Preparing training data...')
 
 file = open(TRAINING_DATA_FILE)
-training_data_str = file.read()
+names_str = file.read()
 file.close()
 
-training_data = json.loads(training_data_str)
-shuffle(training_data)
+names = json.loads(names_str)
+shuffle(names)
+
+training_data = names[:len(names)//4]
+testing_data = names[len(names)//4:]
 
 Xs = []
 Ys = []
@@ -72,16 +73,35 @@ for epoch in range(epochs):
         all_losses.append(current_loss / plot_every)
         current_loss = 0
     
-    # print progress
-    if epoch % 100 == 0:
-        print(f'Epoch {epoch} completed')
+    # print progress (add 1 to exclude epoch 0 and include final epoch)
+    if (epoch + 1) % 100 == 0:
+        print(f'Epoch {epoch + 1} completed')
 
 print('Saving model...')
 
 torch.save(model.state_dict(), MODEL_FILE_NAME)
 
-print('Done')
+print('Creating loss plot...')
+
+# Yes I know importing here isn't ideal
+# but it moves this into the 'creating plot' printout
+import matplotlib.pyplot as plt
 
 plt.plot(all_losses)
 plt.ylabel('Loss')
 plt.show()
+
+print('Testing...')
+
+correctness_count = 0
+for value in testing_data:
+    result, raw_result = model.classify_name(utils.str_to_list(value['name']))
+    if value['gender'] == 'm':
+        correct_result = MALE
+    else:
+        correct_result = FEMALE
+    
+    if correct_result == result:
+        correctness_count += 1
+
+print(f'Network was correct in {correctness_count / len(testing_data) * 100}% of test cases')

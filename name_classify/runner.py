@@ -1,3 +1,5 @@
+from random import shuffle
+
 print('Importing pytorch...')
 
 # import libraries 
@@ -16,13 +18,11 @@ model.load_state_dict(torch.load(MODEL_FILE_NAME))
 # test input
 while True:
     user_input = input('Enter a name: ')
-    network_input = torch.tensor(utils.str_to_list(user_input))
-    out = model(network_input)
-    result = out.detach().numpy()[0]
+    result, raw_result = model.classify_name(user_input)
 
-    if round(result) == MALE:
+    if result == MALE:
         gender = 'male'
     else:
         gender = 'female'
 
-    print(f'Network says: {gender} ({result})')
+    print(f'Network says: {gender} ({raw_result})')

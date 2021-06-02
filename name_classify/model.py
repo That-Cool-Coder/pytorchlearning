@@ -13,15 +13,24 @@ FEMALE = 1
 class NameClassify(nn.Module):
     def __init__(self):
         super(NameClassify, self).__init__()
-        self.activation_function = nn.Sigmoid()
+        self.sigmoid = nn.Sigmoid()
+        self.relu = nn.ReLU()
         self.linear = nn.Linear(utils.MAX_STR_LENGTH * len(utils.CHARSET), 100)
-        self.linear2 = nn.Linear(100, 25)
-        self.linear3 = nn.Linear(25, 1)
+        self.linear2 = nn.Linear(100, 15)
+        self.linear3 = nn.Linear(15, 1)
 
     def forward(self, input):
         x = self.linear(input)
-        sig = self.activation_function(x)
-        x = self.linear2(x)
-        sig = self.activation_function(x)
-        yh = self.linear3(sig)
+        val = self.relu(x)
+        x = self.linear2(val)
+        val = self.sigmoid(x)
+        yh = self.linear3(val)
         return yh
+    
+    def classify_name(self, name:str):
+        network_input = torch.tensor(utils.str_to_list(name))
+        out = self(network_input)
+        raw_result = out.detach().numpy()[0]
+        rounded_result = utils.nearest(raw_result, MALE, FEMALE)
+
+        return (rounded_result, raw_result)
