@@ -13,18 +13,15 @@ FEMALE = 1
 class NameClassify(nn.Module):
     def __init__(self):
         super(NameClassify, self).__init__()
-        self.sigmoid = nn.ReLU()
-        self.linear = nn.Linear(utils.MAX_STR_LENGTH, 50)
-        self.linear2 = nn.Linear(50, 25)
-        self.linear3 = nn.Linear(25, 20)
-        self.linear4 = nn.Linear(20, 1)
+        self.activation_function = nn.Sigmoid()
+        self.linear = nn.Linear(utils.MAX_STR_LENGTH * len(utils.CHARSET), 100)
+        self.linear2 = nn.Linear(100, 25)
+        self.linear3 = nn.Linear(25, 1)
 
     def forward(self, input):
         x = self.linear(input)
-        sig = self.sigmoid(x)
+        sig = self.activation_function(x)
         x = self.linear2(x)
-        sig = self.sigmoid(x)
-        x = self.linear3(x)
-        sig = self.sigmoid(x)
-        yh = self.linear4(sig)
+        sig = self.activation_function(x)
+        yh = self.linear3(sig)
         return yh

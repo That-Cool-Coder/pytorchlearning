@@ -14,6 +14,8 @@ import utils
 
 TRAINING_DATA_FILE = 'names_labelled.json'
 
+print('Preparing training data...')
+
 file = open(TRAINING_DATA_FILE)
 training_data_str = file.read()
 file.close()
@@ -30,6 +32,7 @@ for item in training_data:
         Ys.append(FEMALE)
     else:
         Ys.append(MALE)
+
 Xs = torch.Tensor(Xs)
 
 Ys = torch.Tensor(Ys).reshape(Xs.shape[0], 1)

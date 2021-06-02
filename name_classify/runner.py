@@ -19,4 +19,10 @@ while True:
     network_input = torch.tensor(utils.str_to_list(user_input))
     out = model(network_input)
     result = out.detach().numpy()[0]
-    print(f'Network says: {result}')
+
+    if round(result) == MALE:
+        gender = 'male'
+    else:
+        gender = 'female'
+
+    print(f'Network says: {gender} ({result})')
