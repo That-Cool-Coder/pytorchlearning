@@ -21,8 +21,8 @@ file.close()
 names = json.loads(names_str)
 shuffle(names)
 
-training_data = names[:len(names)//4]
-testing_data = names[len(names)//4:]
+training_data = names[:len(names)//2]
+testing_data = names[len(names)//2:]
 
 Xs = []
 Ys = []
