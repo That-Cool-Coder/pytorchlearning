@@ -18,11 +18,11 @@ model.load_state_dict(torch.load(MODEL_FILE_NAME))
 # test input
 while True:
     user_input = input('Enter a name: ')
-    result, raw_result = model.classify_name(user_input)
+    result, certainty = model.classify_name(user_input)
 
     if result == MALE:
         gender = 'male'
     else:
         gender = 'female'
 
-    print(f'Network says: {gender} ({raw_result})')
+    print(f'Network says: {gender} (certainty: {certainty})')

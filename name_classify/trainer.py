@@ -29,14 +29,16 @@ Ys = []
 
 for item in training_data:
     Xs.append(utils.str_to_list(item['name']))
+    datum = [0, 0]
     if item['gender'] == 'f':
-        Ys.append(FEMALE)
+        datum[FEMALE] = 1
     else:
-        Ys.append(MALE)
+        datum[MALE] = 1
+    Ys.append(datum)
 
 Xs = torch.Tensor(Xs)
 
-Ys = torch.Tensor(Ys).reshape(Xs.shape[0], 1)
+Ys = torch.Tensor(Ys).reshape(Xs.shape[0], 2)
 
 print('Initialising model...')
 
@@ -70,7 +72,7 @@ for epoch in range(epochs):
     # append to loss
     current_loss += loss
     if epoch % plot_every == 0:
-        all_losses.append(current_loss / plot_every)
+        all_losses.append((current_loss / plot_every).detach().numpy())
         current_loss = 0
     
     # print progress (add 1 to exclude epoch 0 and include final epoch)
@@ -86,7 +88,6 @@ print('Creating loss plot...')
 # Yes I know importing here isn't ideal
 # but it moves this into the 'creating plot' printout
 import matplotlib.pyplot as plt
-
 plt.plot(all_losses)
 plt.ylabel('Loss')
 plt.show()
@@ -95,7 +96,7 @@ print('Testing...')
 
 correctness_count = 0
 for value in testing_data:
-    result, raw_result = model.classify_name(utils.str_to_list(value['name']))
+    result, certainty = model.classify_name(utils.str_to_list(value['name']))
     if value['gender'] == 'm':
         correct_result = MALE
     else:

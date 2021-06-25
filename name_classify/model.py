@@ -17,7 +17,7 @@ class NameClassify(nn.Module):
         self.relu = nn.ReLU()
         self.linear = nn.Linear(utils.MAX_STR_LENGTH * len(utils.CHARSET), 100)
         self.linear2 = nn.Linear(100, 15)
-        self.linear3 = nn.Linear(15, 1)
+        self.linear3 = nn.Linear(15, 2)
 
     def forward(self, input):
         x = self.linear(input)
@@ -29,8 +29,8 @@ class NameClassify(nn.Module):
     
     def classify_name(self, name:str):
         network_input = torch.tensor(utils.str_to_list(name))
-        out = self(network_input)
-        raw_result = out.detach().numpy()[0]
-        rounded_result = utils.nearest(raw_result, MALE, FEMALE)
+        output = self(network_input).detach().numpy().tolist()
+        gender = output.index(max(output))
+        certainty = abs(output[0] - output[1])
 
-        return (rounded_result, raw_result)
+        return (gender, certainty)
