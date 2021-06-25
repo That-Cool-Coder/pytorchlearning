@@ -1,6 +1,7 @@
 print('Importing libraries..')
 
 import tkinter as tk
+from math import sqrt
 
 import torch
 import torchvision
@@ -28,6 +29,8 @@ class App(tk.Tk):
 
     BLACK = -0.424
     WHITE = 2.8
+
+    BRUSH_RADIUS = 2
 
     UPDATE_RATE = int(1000 / 120)
 
@@ -94,9 +97,23 @@ class App(tk.Tk):
     
     def updateloop(self):
         if self.mouse_down:
-            row = int(self.mouse_x / self.IMAGE_SCALE)
-            col = int(self.mouse_y / self.IMAGE_SCALE)
-            self.drawn_image[0][0][col][row] = self.WHITE
+            mouse_row = int(self.mouse_y / self.IMAGE_SCALE)
+            mouse_col = int(self.mouse_x / self.IMAGE_SCALE)
+            for row_num in range(len(self.drawn_image[0][0])):
+                crnt_row = self.drawn_image[0][0][row_num]
+                for col_num in range(len(crnt_row)):
+                    side_b = mouse_row - row_num
+                    side_a = mouse_col - col_num
+                    dist_sq = side_a ** 2 + side_b ** 2
+                    if dist_sq < self.BRUSH_RADIUS ** 2:
+                        dist = sqrt(dist_sq)
+                        brightness = dist / self.BRUSH_RADIUS
+                        brightness = self.map_number(brightness, 1, 0,
+                            self.BLACK, self.WHITE)
+                        crnt_row[col_num] += brightness
+                        crnt_row[col_num] = max(crnt_row[col_num], self.BLACK)
+                        crnt_row[col_num] = min(crnt_row[col_num], self.WHITE)
+        
         self.update_canvas()
 
         self.after(self.UPDATE_RATE, self.updateloop)
