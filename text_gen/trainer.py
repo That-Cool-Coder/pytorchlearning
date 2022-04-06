@@ -9,6 +9,8 @@ from torch.autograd import Variable
 
 from model import *
 
+torch.set_num_threads(3)
+
 print('Initialising model...')
 
 model = TextGen(CHARSET, LOOK_BACK)
@@ -34,7 +36,7 @@ outputs = torch.Tensor(outputs).reshape(inputs.shape[0], len(CHARSET))
 
 print('Training...')
 
-epochs = 1000
+epochs = 6000
 mseloss = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr = 0.03)
 

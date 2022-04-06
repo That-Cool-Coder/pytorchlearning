@@ -13,7 +13,7 @@ model = TextGen(CHARSET, look_back=LOOK_BACK)
 print('Loading training...')
 model.load_state_dict(torch.load(MODEL_FILE_NAME))
 
-OUT_LEN = 50 
+OUT_LEN = 5000
 
 while True:
     user_input = input(f'Enter a prompt (at least {LOOK_BACK} characters): ')

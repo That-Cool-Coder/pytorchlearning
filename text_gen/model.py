@@ -4,10 +4,11 @@ import string
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
+import numpy as np
 
 MODEL_FILE_NAME = 'text_gen.pth'
 CHARSET = list(string.ascii_lowercase + ' .')
-LOOK_BACK = 10
+LOOK_BACK = 20
 
 class TextGen(nn.Module):
     def __init__(self, charset: typing.List[str], look_back = 4):
@@ -18,8 +19,8 @@ class TextGen(nn.Module):
         self.sigmoid = nn.Sigmoid()
         self.relu = nn.ReLU()
         self.linear = nn.Linear(len(self.charset) * look_back, 100)
-        self.linear2 = nn.Linear(100, 20)
-        self.linear3 = nn.Linear(20, len(self.charset))
+        self.linear2 = nn.Linear(100, 40)
+        self.linear3 = nn.Linear(40, len(self.charset))
 
     def forward(self, input):
         x = self.linear(input)
@@ -45,6 +46,10 @@ class TextGen(nn.Module):
         return prompt_modified
     
     def tensor_to_char(self, data: list):
+        data = [max(n, 0) for n in data]
+        divisor = sum(data)
+        data = [x / divisor for x in data]
+        return self.charset[np.random.choice(len(data), p=data)]
         return self.charset[data.index(max(data))]
     
     def next_char(self, prompt: str):
