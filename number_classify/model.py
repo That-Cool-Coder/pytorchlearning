@@ -9,11 +9,12 @@ class NumberClassifier(nn.Module):
     # accepts number between -1 and 1 and decides if it is positive or negative
     # extremely simple thing to try and get everything working
 
-    def __init__(self):
+    def __init__(self, dev):
         super(NumberClassifier, self).__init__()
-        self.linear = nn.Linear(1, 2)
+        self.linear = nn.Linear(1, 2, device=dev)
         self.Sigmoid = nn.Sigmoid()
-        self.linear2 = nn.Linear(2, 1)
+        self.linear2 = nn.Linear(2, 1, device=dev)
+        self.dev = dev
 
     def forward(self, input):
         x = self.linear(input)

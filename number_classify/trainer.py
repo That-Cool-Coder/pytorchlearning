@@ -1,3 +1,7 @@
+# Really simple (stupidly trivial) network for getting stuff working on GPU
+# Due to the tiny network is actually way slower on GPU
+# If you add 20000 neurons per layer then GPU is much more performant
+
 print('Importing pytorch...')
 # import libraries 
 import numpy as np
@@ -9,17 +13,21 @@ from model import NumberClassifier, MODEL_FILE_NAME
 
 print('Initialising model...')
 
+dev = torch.device('cuda')
+torch.set_num_threads(8)
+
+model = NumberClassifier(dev)
+
+print('Creating training data')
 # create data
-Xs = torch.linspace(-1, 1, 1000).numpy()
+Xs = torch.linspace(-1., 1., 1000).numpy()
 np.random.shuffle(Xs)
-Xs = torch.tensor(Xs).reshape(Xs.shape[0], 1)
+Xs = torch.tensor(Xs, device=dev).reshape(Xs.shape[0], 1)
 
-Ys = list(map(lambda x: int(x > 0), Xs))
-Ys = torch.Tensor(Ys).reshape(Xs.shape[0], 1)
+Ys = list(map(lambda x: float(x > 0), Xs))
+Ys = torch.tensor(Ys, device=dev).reshape(Xs.shape[0], 1)
 
-model = NumberClassifier()
-
-epochs = 100
+epochs = 10000
 mseloss = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr = 0.03)
 all_losses = []
@@ -51,8 +59,8 @@ for epoch in range(epochs):
         current_loss = 0
     
     # print progress
-    if epoch % 500 == 0:
-        print(f'Epoch {epoch} completed')
+    if (epoch + 1) % 500 == 0:
+        print(f'Epoch {epoch + 1} completed')
 
 print('Saving model...')
 
